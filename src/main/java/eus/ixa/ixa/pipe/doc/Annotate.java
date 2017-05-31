@@ -51,7 +51,7 @@ public class Annotate {
   }
   
   /**
-   * Extract Document Labels into Topics NAF layer.
+   * Extract Document Labels.
    * @param kaf the KAFDocument
    * @throws IOException if io errors
    */  
@@ -72,6 +72,11 @@ public class Annotate {
       topic.setMethod("ixa-pipe-doc");
   }
   
+  /**
+   * Serialize into Topics NAF layer.
+   * @param kaf the naf document
+   * @return the string containing the NAF document
+   */
   public final String serializeToNAF(final KAFDocument kaf) {
     return kaf.toString();
   }
