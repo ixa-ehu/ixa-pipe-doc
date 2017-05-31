@@ -53,7 +53,6 @@ public class Annotate {
   /**
    * Extract Document Labels.
    * @param kaf the KAFDocument
-   * @throws IOException if io errors
    */  
   public final void classify(final KAFDocument kaf) {
 	  List<List<WF>> sentences = kaf.getSentences();
