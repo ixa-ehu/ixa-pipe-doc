@@ -4,7 +4,7 @@ ixa-pipe-doc
 [![Build Status](https://travis-ci.org/ixa-ehu/ixa-pipe-doc.svg?branch=master)](https://travis-ci.org/ixa-ehu/ixa-pipe-doc)
 [![GitHub license](https://img.shields.io/badge/license-Apache%202-blue.svg)](https://raw.githubusercontent.com/apache/opennlp/master/LICENSE)
 
-ixa-pipe-doc is a document classifier; ixa-pipe-doc is part of the IXA pipes, a multilingual set of NLP tools developed
+ixa-pipe-doc is the IXA pipes document classifier, a multilingual set of NLP tools developed
 by the IXA NLP Group [http://ixa2.si.ehu.es/ixa-pipes]
 
 Please go to [http://ixa2.si.ehu.es/ixa-pipes] for general information about the IXA
@@ -22,7 +22,7 @@ for easy access to its API.
 ## TABLE OF CONTENTS
 
 1. [Overview of ixa-pipe-doc](#overview)
-2. [Usage of ixa-pipe-nerc](#cli-usage)
+2. [Usage of ixa-pipe-doc](#cli-usage)
   + [Document Classification](#tagging)
   + [Server mode](#server)
 3. [API via Maven Dependency](#api)
