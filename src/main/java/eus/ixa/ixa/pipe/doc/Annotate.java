@@ -43,43 +43,46 @@ public class Annotate {
   private StatisticalDocumentClassifier docClassifier;
   private String source;
 
-  
   public Annotate(final Properties properties) throws IOException {
 
     this.source = properties.getProperty("model");
     docClassifier = new StatisticalDocumentClassifier(properties);
   }
-  
+
   /**
    * Extract Document Labels.
-   * @param kaf the KAFDocument
-   */  
+   * 
+   * @param kaf
+   *          the KAFDocument
+   */
   public final void classify(final KAFDocument kaf) {
-	  List<List<WF>> sentences = kaf.getSentences();
-	  List<String> tokens = new ArrayList<>();
-	  for (List<WF> sentence : sentences) {
-	    for (WF wf : sentence) {
-	      tokens.add(wf.getForm());
-	    }
-	  }
-	  String[] document = tokens.toArray(new String[tokens.size()]);
-	  String label = docClassifier.classify(document);
-	  Topic topic = kaf.newTopic(label);
-      double[] probs = docClassifier.classifyProb(document);
-      topic.setConfidence((float)probs[0]);
-      topic.setSource(Paths.get(source).getFileName().toString());
-      topic.setMethod("ixa-pipe-doc");
+    List<List<WF>> sentences = kaf.getSentences();
+    List<String> tokens = new ArrayList<>();
+    for (List<WF> sentence : sentences) {
+      for (WF wf : sentence) {
+        tokens.add(wf.getForm());
+      }
+    }
+    String[] document = tokens.toArray(new String[tokens.size()]);
+    String label = docClassifier.classify(document);
+    Topic topic = kaf.newTopic(label);
+    double[] probs = docClassifier.classifyProb(document);
+    topic.setConfidence((float) probs[0]);
+    topic.setSource(Paths.get(source).getFileName().toString());
+    topic.setMethod("ixa-pipe-doc");
   }
-  
+
   /**
    * Serialize into Topics NAF layer.
-   * @param kaf the naf document
+   * 
+   * @param kaf
+   *          the naf document
    * @return the string containing the NAF document
    */
   public final String serializeToNAF(final KAFDocument kaf) {
     return kaf.toString();
   }
-  
+
   /**
    * Output annotation in tabulated format.
    * 
