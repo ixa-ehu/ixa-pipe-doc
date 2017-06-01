@@ -203,5 +203,5 @@
 		<connection>scm:git:git@github.com:ixa-ehu/ixa-pipe-doc.git</connection>
 		<developerConnection>scm:git:git@github.com:ixa-ehu/ixa-pipe-doc.git</developerConnection>
 	</scm>
-	<version>0.0.1</version>
+	<version>0.0.2</version>
 </project>
