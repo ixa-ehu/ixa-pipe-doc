@@ -16,17 +16,18 @@
 
 package eus.ixa.ixa.pipe.doc;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
-import eus.ixa.ixa.pipe.ml.StatisticalDocumentClassifier;
-import eus.ixa.ixa.pipe.ml.document.DocSample;
 import ixa.kaflib.KAFDocument;
 import ixa.kaflib.Topic;
 import ixa.kaflib.WF;
+import opennlp.tools.cmdline.sentiment.SentimentModelLoader;
+import opennlp.tools.sentiment.SentimentME;
+import opennlp.tools.sentiment.SentimentSample;
 
 /**
  * Annotation class for Document Classification.
@@ -40,13 +41,12 @@ public class Annotate {
   /**
    * The DocumentClassifier.
    */
-  private StatisticalDocumentClassifier docClassifier;
+  private SentimentME docClassifier;
   private String source;
 
-  public Annotate(final Properties properties) throws IOException {
+  public Annotate(final String modelName) throws IOException {
 
-    this.source = properties.getProperty("model");
-    docClassifier = new StatisticalDocumentClassifier(properties);
+   docClassifier = new SentimentME(new SentimentModelLoader().load(new File(modelName)));
   }
 
   /**
@@ -64,9 +64,9 @@ public class Annotate {
       }
     }
     String[] document = tokens.toArray(new String[tokens.size()]);
-    String label = docClassifier.classify(document);
+    String label = docClassifier.predict(document);
     Topic topic = kaf.newTopic(label);
-    double[] probs = docClassifier.classifyProb(document);
+    double[] probs = docClassifier.probabilities(document);
     topic.setConfidence((float) probs[0]);
     topic.setSource(Paths.get(source).getFileName().toString());
     topic.setMethod("ixa-pipe-doc");
@@ -101,7 +101,7 @@ public class Annotate {
     }
     String[] document = tokens.toArray(new String[tokens.size()]);
     String label = kaf.getTopics().get(0).getTopicValue();
-    DocSample docSample = new DocSample(label, document, false);
+    SentimentSample docSample = new SentimentSample(label, document, false);
     sb.append(docSample.toString()).append("\n");
     return sb.toString();
   }

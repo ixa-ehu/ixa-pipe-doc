@@ -52,6 +52,11 @@
 			<artifactId>ixa-pipe-ml</artifactId>
 			<version>0.0.5</version>
 		</dependency>
+		<dependency>
+		<groupId>org.apache.opennlp</groupId>
+		<artifactId>opennlp-tools</artifactId>
+		<version>1.8.1-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 
 	<distributionManagement>
