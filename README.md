@@ -8,5 +8,5 @@ Configure testTrainer.properties
 
 Run:
 mvn clean package
-java -jar ixa-pipe-doc-$version train -p testTrainer.properties
+java -jar ixa-pipe-doc-$version-exec.jar train -p testTrainer.properties
 
