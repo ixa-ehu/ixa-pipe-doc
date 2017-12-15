@@ -4,7 +4,7 @@ ixa-pipe-doc
 [![Build Status](https://travis-ci.org/ixa-ehu/ixa-pipe-doc.svg?branch=master)](https://travis-ci.org/ixa-ehu/ixa-pipe-doc)
 [![GitHub license](https://img.shields.io/badge/license-Apache%202-blue.svg)](https://raw.githubusercontent.com/apache/opennlp/master/LICENSE)
 
-ixa-pipe-doc is the IXA pipes document classifier, a multilingual set of NLP tools developed
+ixa-pipe-doc is the IXA pipes document classifier or topic detector, a multilingual set of NLP tools developed
 by the IXA NLP Group [http://ixa2.si.ehu.es/ixa-pipes]
 
 Please go to [http://ixa2.si.ehu.es/ixa-pipes] for general information about the IXA
@@ -22,6 +22,7 @@ for easy access to its API.
 ## TABLE OF CONTENTS
 
 1. [Overview of ixa-pipe-doc](#overview)
+  + [Document Classification models](#doc-models)
 2. [Usage of ixa-pipe-doc](#cli-usage)
   + [Document Classification](#tagging)
   + [Server mode](#server)
@@ -39,9 +40,15 @@ and Word2Vec clustering plus some gazetteers in some cases.
 To avoid duplication of efforts, we use and contribute to the API provided by the
 [Apache OpenNLP project](http://opennlp.apache.org) with our own custom developed features for each of the three tasks.
 
+### DOC-Models
+
+Currently we distribute a polarity classification model trained on the [Large Movie Review Dataset](http://ai.stanford.edu/~amaas/data/sentiment/).
+
++ [doc-models.tar.gz](http://ixa2.si.ehu.es/ixa-pipes/models/doc-models-1.0.0.tar.gz)
+
 ### Features
 
-**A description of every feature is provided in the docClassificationTrainer.properties properties
+**A description of every feature is provided in the docClassificationTrainer.properties
 file** distributed with ixa-pipe-doc. As the training functionality is configured in
 properties files, please do check this document. For each model distributed,
 there is a prop file which describes the training of the model, as well as a
@@ -65,10 +72,10 @@ java -jar target/ixa-pipe-doc-${version}-exec.jar tag -help
 
 ### Tagging
 
-If you are in hurry, just execute:
+If you are in hurry, [Download](http://ixa2.si.ehu.es/ixa-pipes/models/movie-review.txt) or create a plain text file and use it like this:
 
 ````shell
-cat file.txt | java -jar ixa-pipe-tok-${version}-exec.java tok -l $lang | java -jar ixa-pipe-doc-${version}-exec.jar tag -m model.bin
+cat movie-review.txt | java -jar ixa-pipe-tok-${version}-exec.java tok -l $lang | java -jar ixa-pipe-doc-${version}-exec.jar tag -m model.bin
 ````
 
 If you want to know more, please follow reading.
@@ -130,7 +137,7 @@ The contents of the module are the following:
 
 ## INSTALLATION
 
-Installing the ixa-pipe-nerc requires the following steps:
+Installing the ixa-pipe-doc requires the following steps:
 
 If you already have installed in your machine the Java 1.8+ and MAVEN 3, please go to step 3
 directly. Otherwise, follow these steps:
@@ -196,7 +203,7 @@ git clone https://github.com/ixa-ehu/ixa-pipe-doc
 
 ### 4. Compile
 
-Execute this command to compile ixa-pipe-nerc:
+Execute this command to compile ixa-pipe-doc:
 
 ````shell
 cd ixa-pipe-doc
