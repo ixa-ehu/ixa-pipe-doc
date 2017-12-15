@@ -45,12 +45,12 @@
 		<dependency>
 			<groupId>com.github.ixa-ehu</groupId>
 			<artifactId>kaflib-naf</artifactId>
-			<version>1.1.15</version>
+			<version>1.1.18</version>
 		</dependency>
 		<dependency>
 			<groupId>eus.ixa</groupId>
 			<artifactId>ixa-pipe-ml</artifactId>
-			<version>0.0.5</version>
+			<version>0.0.6</version>
 		</dependency>
 	</dependencies>
 
@@ -203,5 +203,5 @@
 		<connection>scm:git:git@github.com:ixa-ehu/ixa-pipe-doc.git</connection>
 		<developerConnection>scm:git:git@github.com:ixa-ehu/ixa-pipe-doc.git</developerConnection>
 	</scm>
-	<version>0.0.2</version>
+	<version>0.0.3</version>
 </project>

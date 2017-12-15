@@ -47,7 +47,7 @@ import ixa.kaflib.KAFDocument;
  * classifier.
  * 
  * @author ragerri
- * @version 2017-05-31
+ * @version 2017-12-15
  * 
  */
 public class CLI {

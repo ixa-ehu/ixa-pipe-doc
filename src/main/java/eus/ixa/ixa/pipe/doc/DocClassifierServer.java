@@ -16,14 +16,13 @@
 
 package eus.ixa.ixa.pipe.doc;
 
-import ixa.kaflib.KAFDocument;
-
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Properties;
@@ -31,6 +30,8 @@ import java.util.Properties;
 import org.jdom2.JDOMException;
 
 import com.google.common.io.Files;
+
+import ixa.kaflib.KAFDocument;
 
 public class DocClassifierServer {
 
@@ -66,31 +67,49 @@ public class DocClassifierServer {
     Integer port = Integer.parseInt(properties.getProperty("port"));
     model = properties.getProperty("model");
     outputFormat = properties.getProperty("outputFormat");
+    
+    String kafToString;
     ServerSocket socketServer = null;
+    Socket activeSocket;
+    BufferedReader inFromClient = null;
+    BufferedWriter outToClient = null;
 
     try {
       Annotate annotator = new Annotate(properties);
       System.out.println("-> Trying to listen port... " + port);
       socketServer = new ServerSocket(port);
-
+      System.out.println("-> Connected and listening to port " + port);
       while (true) {
-        System.out.println("-> Connected and listening to port " + port);
-        try (Socket activeSocket = socketServer.accept();
-            DataInputStream inFromClient = new DataInputStream(
-                activeSocket.getInputStream());
-            DataOutputStream outToClient = new DataOutputStream(
-                new BufferedOutputStream(activeSocket.getOutputStream()));) {
-          System.out.println("-> Received a  connection from: " + activeSocket);
-          // get data from client
+        try {
+          activeSocket = socketServer.accept();
+          inFromClient = new BufferedReader(new InputStreamReader(activeSocket.getInputStream(), "UTF-8"));
+          outToClient = new BufferedWriter(new OutputStreamWriter(activeSocket.getOutputStream(), "UTF-8"));
+          //get data from client
           String stringFromClient = getClientData(inFromClient);
           // annotate
-          String kafToString = getAnnotations(annotator, stringFromClient);
-          // send to server
-          sendDataToServer(outToClient, kafToString);
+          kafToString = getAnnotations(annotator, stringFromClient);
+        } catch (JDOMException e) {
+          kafToString = "\n-> ERROR: Badly formatted NAF document!!\n";
+          sendDataToClient(outToClient, kafToString);
+          continue;
+        } catch (UnsupportedEncodingException e) {
+          kafToString = "\n-> ERROR: UTF-8 not valid!!\n";
+          sendDataToClient(outToClient, kafToString);
+          continue;
+        } catch (IOException e) {
+          kafToString = "\n -> ERROR: Input data not correct!!\n";
+          sendDataToClient(outToClient, kafToString);
+          continue;
         }
-      }
-    } catch (IOException | JDOMException e) {
+        //send data to server after all exceptions and close the outToClient
+        sendDataToClient(outToClient, kafToString);
+        //close the resources
+        inFromClient.close();
+        activeSocket.close();
+      } //end of processing block
+    } catch (IOException e) {
       e.printStackTrace();
+      System.err.println("-> IOException due to failing to create the TCP socket or to wrongly provided model path.");
     } finally {
       System.out.println("closing tcp socket...");
       try {
@@ -100,26 +119,26 @@ public class DocClassifierServer {
       }
     }
   }
-
+  
   /**
    * Read data from the client and output to a String.
-   * 
-   * @param inFromClient
-   *          the client inputstream
+   * @param inFromClient the client inputstream
    * @return the string from the client
    */
-  private String getClientData(DataInputStream inFromClient) {
-    // get data from client and build a string with it
+  private String getClientData(BufferedReader inFromClient) {
     StringBuilder stringFromClient = new StringBuilder();
     try {
-      boolean endOfClientFile = inFromClient.readBoolean();
-      String line = "";
-      while (!endOfClientFile) {
-        line = inFromClient.readUTF();
+      String line;
+      while ((line = inFromClient.readLine()) != null) {
+        if (line.matches("<ENDOFDOCUMENT>")) {
+          break;
+        }
         stringFromClient.append(line).append("\n");
-        endOfClientFile = inFromClient.readBoolean();
+        if (line.matches("</NAF>")) {
+          break;
+        }
       }
-    } catch (IOException e) {
+    }catch (IOException e) {
       e.printStackTrace();
     }
     return stringFromClient.toString();
@@ -127,23 +146,17 @@ public class DocClassifierServer {
 
   /**
    * Send data back to server after annotation.
-   * 
-   * @param outToClient
-   *          the outputstream to the client
-   * @param kafToString
-   *          the string to be processed
-   * @throws IOException
-   *           if io error
+   * @param outToClient the outputstream to the client
+   * @param kafToString the string to be processed
+   * @throws IOException if io error
    */
-  private void sendDataToServer(DataOutputStream outToClient,
-      String kafToString) throws IOException {
-
-    byte[] kafByteArray = kafToString.getBytes("UTF-8");
-    outToClient.write(kafByteArray);
+  private void sendDataToClient(BufferedWriter outToClient, String kafToString) throws IOException {
+    outToClient.write(kafToString);
+    outToClient.close();
   }
-
+  
   /**
-   * OTE annotator.
+   * Topic annotator.
    * 
    * @param annotator
    *          the annotator
@@ -161,8 +174,8 @@ public class DocClassifierServer {
     BufferedReader clientReader = new BufferedReader(
         new StringReader(stringFromClient));
     KAFDocument kaf = KAFDocument.createFromStream(clientReader);
-    KAFDocument.LinguisticProcessor newLp = kaf.addLinguisticProcessor(
-        "entities", "ixa-pipe-nerc-" + Files.getNameWithoutExtension(model),
+    KAFDocument.LinguisticProcessor newLp = kaf.addLinguisticProcessor("topics",
+        "ixa-pipe-doc-" + Files.getNameWithoutExtension(model),
         version + "-" + commit);
     newLp.setBeginTimestamp();
     annotator.classify(kaf);
