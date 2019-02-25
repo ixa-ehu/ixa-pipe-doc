@@ -42,9 +42,13 @@ To avoid duplication of efforts, we use and contribute to the API provided by th
 
 ### DOC-Models
 
-Currently we distribute a polarity classification model trained on the [Large Movie Review Dataset](http://ai.stanford.edu/~amaas/data/sentiment/).
+## Hyperpartisan News detection at SemEval 2019
 
-+ [doc-models.tar.gz](http://ixa2.si.ehu.es/ixa-pipes/models/doc-models-1.0.0.tar.gz)
++ [hyperpartisan-models.tar.gz](http://ixa2.si.ehu.es/ixa-pipes/models/hyperpartisan-models-0.0.1.tar.gz)
+
+## Polarity classification
+
++ [doc-models.tar.gz](http://ixa2.si.ehu.es/ixa-pipes/models/doc-models-1.0.0.tar.gz) (trained on the [Large Movie Review Dataset](http://ai.stanford.edu/~amaas/data/sentiment/)
 
 ### Features
 
